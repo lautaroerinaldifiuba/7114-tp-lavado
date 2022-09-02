@@ -1,0 +1,19 @@
+Primera impresión del problema:
+- El problema a resolver no me parece complicado.
+- Yo lo veo costoso computacionalmente, porque lo encuentro de naturaleza algorítmica e iterativa.
+
+Idea general de cómo resolver el problema planteado:
+- Se me ocurrió tener un conjunto de lavados consolidados, que se van a ir creando de forma dinámica en la medida en la que voy analizando nuevas prendas.
+- Inicialmente no hay ningún lavado, y se va a crear el primer lavado con la primer prenda de la que se lean restricciones del archivo.
+- Para la siguiente prenda que se encuentren restricciones, se va a ir comparando con el conjunto de lavados ya consolidados: La prenda se asignará al primer lavado contra el cual ninguna de las restricciones presente incompatibilidades; y en caso de que la prenda presente incompatibilidades con todos los lavados ya creados, se creará un nuevo lavado que contendrá en principio solo a esta prenda.
+- Una vez que se terminan de analizar todas las prendas con restricciones, se van a asignar al primer lavado todas las prendas que no tienen incompatibilidades con ninguna otra (tomé como supuesto que cada lavado no tiene cantidad máxima de prendas).
+
+Comentarios sobre el código:
+- Me encontré con el caso no detallado en el enunciado ni tampoco entre el conjunto de datos de entrada, de que puede haber prendas que no tengan ninguna incompatibilidad con otras prendas, y deben ser agregadas a algún lavado luego de comparar todas las restricciones.
+- También asumí que el archivo de entrada viene siempre bien formateado, y que los registros vienen agrupados según el orden que detalla el enunciado (líneas de comentarios "c", única línea con definición del problema "p", todo el conjunto de incompatibilidades entre prendas "e" -ordenados de menor a mayor por el número de la primer prenda-, y al final todo el conjunto de tiempos de lavado "n" - también ordenados de menor a mayor por el número de prenda).
+
+Comentarios finales de la entrega:
+- Creo que la solución implementada llega a un resultado cercano al óptimo (en cuanto a minimizar el tiempo total de lavado).
+- Sin embargo, creo también que se puede analizar resolverlo con soluciones alternativas para ver si se puede mejorar la eficiencia algorítmica (por ejemplo, plantenado algún tipo de matriz de incompatibilidades en lugar de tener una naturaleza tan iterativa).
+
+
