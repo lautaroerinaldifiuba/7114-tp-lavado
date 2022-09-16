@@ -20,4 +20,4 @@ Comentarios finales de la entrega:
 - En este caso, no se puede ver a ojo si la solución implementada se acerca a la óptima o no (en cuanto a minimizar el tiempo total de lavado).
 - Lo que si puedo destacar, es que el tiempo computacional de procesamiento es mínimo (casi instantáneo).
 - Sin embargo, creo también que se puede analizar resolverlo con soluciones alternativas para ver si se puede mejorar la eficiencia algorítmica (por ejemplo, plantenado algún tipo de matriz de incompatibilidades en lugar de tener una naturaleza tan iterativa).
-
+- Me llamó la atención que los mejores tiempos se obtengan ordenando las prendas por tiempo de lavado decreciente. Antes de codificarlo y probarlo, yo me hubiese inclinado a que el mejor resultado lo iba a obtener ordenando las prendas por cantidad de restricciones de mayor a menor.
