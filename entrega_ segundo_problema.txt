@@ -1,0 +1,23 @@
+Primera impresión del problema:
+- El problema a resolver no me parece complicado.
+- Yo lo veo costoso computacionalmente, porque lo encuentro de naturaleza algorítmica e iterativa.
+- Le suma algún grado de complicación adicional que el archivo de entrada no tenga cargadas todas las incompatiblidades y su recíproca, como pasaba en la entrega anterior.
+
+Idea general de cómo resolver el problema planteado:
+- Se me ocurrió tener un conjunto de lavados consolidados, que se van a ir creando de forma dinámica en la medida en la que voy analizando nuevas prendas.
+- En la búsqueda de minimizar el tiempo total de lavado, entre varios intentos que hice, encontré que lo más importante era procesar las prendas ordenándolas previamente por tiempo de lavado de mayor a menor. Eso hace que se reduzca considerablemente el tiempo.
+- Como mejora adicional, agregué que si dos prendas tienen el mismo tiempo de lavado, se procesa primero la que tiene mayor cantidad de restricciones (eso permite reducir un 5% adicional el tiempo total de lavado).
+- Inicialmente no hay ningún lavado, y se va a crear el primer lavado con la primer prenda de la que se lean restricciones del archivo.
+- Para la siguiente prenda que se encuentren restricciones, se va a ir comparando con el conjunto de lavados ya consolidados: La prenda se asignará al primer lavado contra el cual ninguna de las restricciones presente incompatibilidades; y en caso de que la prenda presente incompatibilidades con todos los lavados ya creados, se creará un nuevo lavado que contendrá en principio solo a esta prenda.
+- Una vez que se terminan de analizar todas las prendas con restricciones, se van a asignar al primer lavado todas las prendas que no tienen incompatibilidades con ninguna otra (tomé como supuesto que cada lavado no tiene cantidad máxima de prendas).
+
+Comentarios sobre el código:
+- En relación al problema anterior, lo más relevante fue que el archivo no tiene cargadas de forma simétrica las incompatiblidades entre prendas (es decir, si la prenda p1 es incompatible con la p2, por ende también vale la recíproca). Como el archivo no estaba formateado de esa manera, tuve que hacer un preprocesamiento para tener una matriz con cada incompatibilidad y su recíproco, y luego trabajar en memoria con dichos datos.
+- Me encontré con el caso no detallado en el enunciado ni tampoco entre el conjunto de datos de entrada, de que puede haber prendas que no tengan ninguna incompatibilidad con otras prendas, y deben ser agregadas a algún lavado luego de comparar todas las restricciones.
+- También asumí que el archivo de entrada viene siempre bien formateado, y que los registros vienen agrupados según el orden que detalla el enunciado (líneas de comentarios "c", única línea con definición del problema "p", todo el conjunto de incompatibilidades entre prendas "e" -ordenados de menor a mayor por el número de la primer prenda-, y al final todo el conjunto de tiempos de lavado "n" - también ordenados de menor a mayor por el número de prenda).
+
+Comentarios finales de la entrega:
+- En este caso, no se puede ver a ojo si la solución implementada se acerca a la óptima o no (en cuanto a minimizar el tiempo total de lavado).
+- Lo que si puedo destacar, es que el tiempo computacional de procesamiento es mínimo (casi instantáneo).
+- Sin embargo, creo también que se puede analizar resolverlo con soluciones alternativas para ver si se puede mejorar la eficiencia algorítmica (por ejemplo, plantenado algún tipo de matriz de incompatibilidades en lugar de tener una naturaleza tan iterativa).
+
