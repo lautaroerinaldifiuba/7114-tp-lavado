@@ -7,6 +7,7 @@ Idea general de cómo resolver el problema planteado:
 - Se me ocurrió tener un conjunto de lavados consolidados, que se van a ir creando de forma dinámica en la medida en la que voy analizando nuevas prendas.
 - En la búsqueda de minimizar el tiempo total de lavado, entre varios intentos que hice, encontré que lo más importante era procesar las prendas ordenándolas previamente por tiempo de lavado de mayor a menor. Eso hace que se reduzca considerablemente el tiempo.
 - Como mejora adicional, agregué que si dos prendas tienen el mismo tiempo de lavado, se procesa primero la que tiene mayor cantidad de restricciones (esto permite reducir un 5% adicional el tiempo total de lavado).
+- Otra mejora adicional, que también mejora un 3 % adicional el tiempo de lavado, es que si hay dos lavados con el mismo tiempo en el que la prenda puede agregarse, se elige poner la prenda en el que tenga menor número de incompatibilidades.
 - Inicialmente no hay ningún lavado, y se va a crear el primer lavado la prenda que tarde más tiempo en lavarse.
 - Luego, se continua con el resto de las prendas, empezando por las que tardan más tiempo en lavarse, y se va a ir comparando con el conjunto de lavados ya consolidados: La prenda se asignará al primer lavado contra el cual ninguna de las restricciones presente incompatibilidades; En caso de que la prenda presente incompatibilidades con todos los lavados ya creados, se creará un nuevo lavado que contendrá en principio solo a esta prenda.
 
