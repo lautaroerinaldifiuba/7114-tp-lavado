@@ -32,6 +32,10 @@ unsigned int Lavado::getCantidadPrendas() const {
 	return prendas.size();
 }
 
+unsigned int Lavado::getCantidadIncompatibilidades() const {
+	return incompatibles.size();
+}
+
 Lavado::~Lavado() {
 }
 

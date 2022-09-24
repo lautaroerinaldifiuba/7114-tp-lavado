@@ -24,13 +24,13 @@ using namespace std;
 #define INCOMPATIBILIDAD "e"
 #define TIEMPO_LAVADO "n"
 
-void exportarResultadoAArchivo(string nombre_archivo_salida, map<unsigned int, Lavado*> &los_lavados) {
+void exportarResultadoAArchivo(string nombre_archivo_salida, map<unsigned int, Lavado*> &lavados) {
 	ofstream archivo_salida(nombre_archivo_salida);
 
-	for (unsigned int i = 0; i < los_lavados.size(); ++i) {
-		map<unsigned int, Prenda*>::iterator it = (los_lavados[i]->getPrendas()).begin();
+	for (unsigned int i = 0; i < lavados.size(); ++i) {
+		map<unsigned int, Prenda*>::iterator it = (lavados[i]->getPrendas()).begin();
 
-		for (; it != (los_lavados[i]->getPrendas()).end(); ++it)
+		for (; it != (lavados[i]->getPrendas()).end(); ++it)
 			archivo_salida << (it->second)->getNumero() << " " << i + 1 << endl;
 	}
 	archivo_salida.close();
@@ -60,28 +60,28 @@ void agregarTiempoLavadoIndividual(stringstream *datos, map<unsigned int, unsign
 	tiempo_lavado_prendas[prenda] = tiempo;
 }
 
-int calcularTiempoTotalLavadoConjunto(map<unsigned int, Lavado*> &los_lavados) {
+int calcularTiempoTotalLavadoConjunto(map<unsigned int, Lavado*> &lavados) {
 	unsigned int tiempo_total = 0;
 
-	for (unsigned int i = 0; i < los_lavados.size(); ++i) {
-		cout << "Lavado " << setw(2) << i + 1 << ", " << setw(2) << los_lavados[i]->getCantidadPrendas()
+	for (unsigned int i = 0; i < lavados.size(); ++i) {
+		cout << "Lavado " << setw(2) << i + 1 << ", " << setw(2) << lavados[i]->getCantidadPrendas()
 				<< " prendas, ";
-		cout << setw(2) << los_lavados[i]->getTiempo() << " minutos. Prendas: " << los_lavados[i]->getNroPrendas()
+		cout << setw(2) << lavados[i]->getTiempo() << " minutos. Prendas: " << lavados[i]->getNroPrendas()
 				<< endl;
 
-		tiempo_total += los_lavados[i]->getTiempo();
+		tiempo_total += lavados[i]->getTiempo();
 	}
 	return tiempo_total;
 }
 
-void mostrarReportes(map<unsigned int, Lavado*> &los_lavados, map<unsigned int, unsigned int> &tiempo_lavado_prendas) {
+void mostrarReportes(map<unsigned int, Lavado*> &lavados, map<unsigned int, unsigned int> &tiempo_lavado_prendas) {
 	unsigned int tiempo_lavados_individuales = calcularTiempoTotalLavadosIndividuales(tiempo_lavado_prendas);
 	cout << "Tiempo total de lavado (prendas individuales): " << tiempo_lavados_individuales << " minutos" << endl
 			<< endl;
 
 	cout << "Lavados agrupados:" << endl;
-	unsigned int tiempo_lavados_conjuntos = calcularTiempoTotalLavadoConjunto(los_lavados);
-	cout << endl << "Cantidad de lavados conjuntos: " << los_lavados.size() << endl;
+	unsigned int tiempo_lavados_conjuntos = calcularTiempoTotalLavadoConjunto(lavados);
+	cout << endl << "Cantidad de lavados conjuntos: " << lavados.size() << endl;
 	cout << "Tiempo total de lavado (prendas agrupadas): " << tiempo_lavados_conjuntos << " minutos" << endl;
 }
 
@@ -114,7 +114,24 @@ void preprocesarRestricciones(ifstream &archivo_restricciones, int **&matriz, co
 	}
 }
 
-void asignarLavados(const unsigned int cantidad_prendas, map<unsigned int, Lavado*> &los_lavados,
+unsigned int getNumeroLavadoConMenosRestricciones(map<unsigned int, Lavado*> &lavados, list<unsigned int> &nros_lavados_compatibles) {
+
+	unsigned int nro = *(nros_lavados_compatibles.begin());
+	unsigned int cant_rest = lavados[*(nros_lavados_compatibles.begin())]->getCantidadIncompatibilidades();
+	unsigned int tiempo = lavados[*(nros_lavados_compatibles.begin())]->getTiempo();
+
+	list<unsigned int>::iterator it;
+	for (it = nros_lavados_compatibles.begin(); it != nros_lavados_compatibles.end(); ++it) {
+		if ((tiempo == lavados[*it]->getTiempo()) && (cant_rest < lavados[*it]->getCantidadIncompatibilidades())) {
+			nro = *it;
+			cant_rest = lavados[*it]->getCantidadIncompatibilidades();
+		}
+	}
+
+	return nro;
+}
+
+void asignarLavados(const unsigned int cantidad_prendas, map<unsigned int, Lavado*> &lavados,
 		list<Prenda*> &cesto_ropa, int **matriz) {
 
 	unsigned int prenda = 0;
@@ -122,26 +139,32 @@ void asignarLavados(const unsigned int cantidad_prendas, map<unsigned int, Lavad
 	list<Prenda*>::iterator it;
 	for (it = cesto_ropa.begin(); it != cesto_ropa.end(); ++it) {
 		prenda = (*it)->getNumero();
+		list<unsigned int> nros_lavados_compatibles;
 
 		bool encontro_lavado = false;
 		unsigned int nro_lavado_actual = 0;
 
-		while (!encontro_lavado) {
-			if (nro_lavado_actual == los_lavados.size()) // Significa que ya revisé todos los lavados existentes, hay que empezar un lavado nuevo
-				los_lavados[los_lavados.size()] = new Lavado();
-
-			if (los_lavados[nro_lavado_actual]->esCompatible(prenda)) {
-				los_lavados[nro_lavado_actual]->agregarPrenda((*it));
-
-				for (unsigned int j = 0; j < cantidad_prendas; ++j)
-					if (matriz[prenda - 1][j] == 1)
-						los_lavados[nro_lavado_actual]->agregarIncompatibilidad((j + 1));
-
+		for (nro_lavado_actual = 0; nro_lavado_actual < lavados.size(); ++nro_lavado_actual) {
+			if (lavados[nro_lavado_actual]->esCompatible(prenda)) {
+				nros_lavados_compatibles.push_back(nro_lavado_actual);
 				encontro_lavado = true;
-			} else {
-				++nro_lavado_actual;
 			}
 		}
+
+		unsigned int pos_ins = 0;
+		if (encontro_lavado) {
+			pos_ins = getNumeroLavadoConMenosRestricciones(lavados, nros_lavados_compatibles);
+		} else {
+			// Significa que ya revisé todos los lavados existentes, hay que empezar un lavado nuevo
+			pos_ins = lavados.size();
+			lavados[pos_ins] = new Lavado();
+		}
+
+		// Agrego todas las incompatibilidades que tenìa la prenda al lavado
+		lavados[pos_ins]->agregarPrenda((*it));
+		for (unsigned int j = 0; j < cantidad_prendas; ++j)
+			if (matriz[prenda - 1][j] == 1)
+				lavados[pos_ins]->agregarIncompatibilidad((j + 1));
 	}
 }
 
@@ -223,7 +246,7 @@ int main() {
 	unsigned int cantidad_incompatibilidades = 0;
 
 	map<unsigned int, unsigned int> tiempo_lavado_prendas; // nro_prenda, tiempo_lavado
-	map<unsigned int, Lavado*> los_lavados;
+	map<unsigned int, Lavado*> lavados;
 	list<Prenda*> cesto_ropa;	// prendas ordenadas por algún criterio
 
 	ifstream archivo_restricciones(ARCHIVO_ENTRADA);
@@ -238,11 +261,11 @@ int main() {
 
 
 	crearCestoRopa(cesto_ropa, matriz, cantidad_prendas, tiempo_lavado_prendas);
-	asignarLavados(cantidad_prendas, los_lavados, cesto_ropa, matriz);
+	asignarLavados(cantidad_prendas, lavados, cesto_ropa, matriz);
 
 
-	exportarResultadoAArchivo(ARCHIVO_SALIDA, los_lavados);
-	mostrarReportes(los_lavados, tiempo_lavado_prendas);
+	exportarResultadoAArchivo(ARCHIVO_SALIDA, lavados);
+	mostrarReportes(lavados, tiempo_lavado_prendas);
 
 	liberarMemoria(matriz, cantidad_prendas, cesto_ropa);
 	return 0;

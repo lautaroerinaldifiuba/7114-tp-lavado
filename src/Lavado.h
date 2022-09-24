@@ -17,13 +17,17 @@ public:
 	virtual ~Lavado();
 
 	unsigned int getTiempo() const;
-	void agregarPrenda(Prenda *prenda);
-	void agregarIncompatibilidad(unsigned int nro_prenda);
-	bool esCompatible(unsigned int nro_prenda);
 	unsigned int getCantidadPrendas() const;
-	map<unsigned int, Prenda*>& getPrendas();
+	unsigned int getCantidadIncompatibilidades() const;
+
+	bool esCompatible(unsigned int nro_prenda);
 
 	string getNroPrendas();
+
+	void agregarPrenda(Prenda *prenda);
+	void agregarIncompatibilidad(unsigned int nro_prenda);
+
+	map<unsigned int, Prenda*>& getPrendas();
 };
 
 #endif /* LAVADO_H_ */
